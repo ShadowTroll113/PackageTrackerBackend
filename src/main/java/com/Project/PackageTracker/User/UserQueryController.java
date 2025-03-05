@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -21,18 +22,21 @@ public class UserQueryController {
         return userService.getAllUsers();
     }
 
+    // Login de usuario
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<?> login(@RequestBody AuthRequest authRequest) {
         String username = authRequest.getUsername();
         String password = authRequest.getPassword();
 
-        // Validar las credenciales del usuario
-        boolean isValid = userService.validateUserCredentials(username, password);
+        // Buscar al usuario en la base de datos
+        Optional<User> userOptional = userService.findUserByUsernameAndPassword(username, password);
 
-        // Si las credenciales son válidas, devolvemos un mensaje de éxito
-        if (isValid) {
-            Map<String, String> response = new HashMap<>();
+        // Si el usuario existe, devolvemos el usuario
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            Map<String, Object> response = new HashMap<>();
             response.put("message", "Login successful");
+            response.put("user", user); // Incluimos la información del usuario en la respuesta
             return ResponseEntity.ok(response);
         } else {
             // Si las credenciales son incorrectas, devolvemos un error 401
@@ -41,11 +45,23 @@ public class UserQueryController {
             return ResponseEntity.status(401).body(response); // Unauthorized
         }
     }
+
     // Obtener un usuario por ID
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return userService.getUserById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Buscar un usuario por nombre de usuario
+    @GetMapping("/username/{username}")
+    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
+        User user = userService.findByUsername(username);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

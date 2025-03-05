@@ -13,8 +13,9 @@ public class UserCommandController {
 
     // Crear un nuevo usuario
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        User createdUser = userService.createUser(user);
+        return ResponseEntity.ok(createdUser);
     }
 
     // Actualizar un usuario existente
