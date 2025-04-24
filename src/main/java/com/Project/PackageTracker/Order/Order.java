@@ -7,10 +7,38 @@ import java.util.List;
 
 @Entity
 @Table(name = "orders")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@ToString
 public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    // Un único storeId, sin colecciones
+    @Column(name = "store_id")
+    private Long storeId;
+
+    @Column(name = "warehouse_id")
+    private Long warehouseId;
+
+    @Column(name = "route_id", nullable = true)
+    private Long routeId;
+
+
+    @ElementCollection
+    @CollectionTable(name = "order_products", joinColumns = @JoinColumn(name = "order_id"))
+    private List<OrderProduct> orderProducts;
+
+    @Column(nullable = false)
+    private String status; // "In Transit", "Delivered", "Pending"
+
+    @Column(columnDefinition = "TEXT")
+    private String orderDetails;
+
+
     public Long getId() {
         return id;
     }
@@ -19,20 +47,20 @@ public class Order {
         this.id = id;
     }
 
-    public Long getSenderId() {
-        return senderId;
+    public Long getStoreId() {
+        return storeId;
     }
 
-    public void setSenderId(Long senderId) {
-        this.senderId = senderId;
+    public void setStoreId(Long storeId) {
+        this.storeId = storeId;
     }
 
-    public Long getReceiverId() {
-        return receiverId;
+    public Long getWarehouseId() {
+        return warehouseId;
     }
 
-    public void setReceiverId(Long receiverId) {
-        this.receiverId = receiverId;
+    public void setWarehouseId(Long warehouseId) {
+        this.warehouseId = warehouseId;
     }
 
     public Long getRouteId() {
@@ -43,12 +71,12 @@ public class Order {
         this.routeId = routeId;
     }
 
-    public List<Long> getProductIds() {
-        return productIds;
+    public List<OrderProduct> getOrderProducts() {
+        return orderProducts;
     }
 
-    public void setProductIds(List<Long> productIds) {
-        this.productIds = productIds;
+    public void setOrderProducts(List<OrderProduct> orderProducts) {
+        this.orderProducts = orderProducts;
     }
 
     public String getStatus() {
@@ -59,22 +87,6 @@ public class Order {
         this.status = status;
     }
 
-    public String getStartAddress() {
-        return startAddress;
-    }
-
-    public void setStartAddress(String startAddress) {
-        this.startAddress = startAddress;
-    }
-
-    public String getEndAddress() {
-        return endAddress;
-    }
-
-    public void setEndAddress(String endAddress) {
-        this.endAddress = endAddress;
-    }
-
     public String getOrderDetails() {
         return orderDetails;
     }
@@ -83,44 +95,4 @@ public class Order {
         this.orderDetails = orderDetails;
     }
 
-    public String getShipmentType() {
-        return shipmentType;
-    }
-
-    public void setShipmentType(String shipmentType) {
-        this.shipmentType = shipmentType;
-    }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "sender_id", nullable = true)
-    private Long senderId; // Solo el ID del remitente
-
-    @Column(name = "receiver_id", nullable = true)
-    private Long receiverId; // Solo el ID del destinatario
-
-    @Column(name = "route_id", nullable = false)
-    private Long routeId; // Solo el ID de la ruta
-
-    @ElementCollection
-    @CollectionTable(name = "order_products", joinColumns = @JoinColumn(name = "order_id"))
-    @Column(name = "product_id")
-    private List<Long> productIds; // Lista de IDs de productos
-
-    @Column(nullable = false)
-    private String status; // Ej. "In Transit", "Delivered", "Pending"
-
-    @Column(name = "start_address", nullable = false)
-    private String startAddress; // Dirección de inicio
-
-    @Column(name = "end_address", nullable = false)
-    private String endAddress; // Dirección de destino
-
-    @Column(name = "order_details", columnDefinition = "TEXT")
-    private String orderDetails; // Detalles adicionales del pedido
-
-    @Column(name = "shipment_type", nullable = false)
-    private String shipmentType; // Tipo de envío: "send" o "receive"
 }

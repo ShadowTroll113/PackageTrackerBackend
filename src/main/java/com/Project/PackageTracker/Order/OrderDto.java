@@ -8,15 +8,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderDto {
-
     private Long id;
-    private Long senderId; // ID del remitente
-    private Long receiverId; // ID del destinatario
-    private Long routeId; // ID de la ruta
-    private List<Long> productIds; // Lista de IDs de productos
+    private Long storeId;
+    private Long warehouseId;
+    private Long routeId;
+
+    private List<OrderProductDto> orderProducts;
     private String status;
-    private String startAddress;
-    private String endAddress;
     private String orderDetails;
 
     public Long getId() {
@@ -27,20 +25,20 @@ public class OrderDto {
         this.id = id;
     }
 
-    public Long getSenderId() {
-        return senderId;
+    public Long getStoreId() {
+        return storeId;
     }
 
-    public void setSenderId(Long senderId) {
-        this.senderId = senderId;
+    public void setStoreId(Long storeId) {
+        this.storeId = storeId;
     }
 
-    public Long getReceiverId() {
-        return receiverId;
+    public Long getWarehouseId() {
+        return warehouseId;
     }
 
-    public void setReceiverId(Long receiverId) {
-        this.receiverId = receiverId;
+    public void setWarehouseId(Long warehouseId) {
+        this.warehouseId = warehouseId;
     }
 
     public Long getRouteId() {
@@ -51,12 +49,12 @@ public class OrderDto {
         this.routeId = routeId;
     }
 
-    public List<Long> getProductIds() {
-        return productIds;
+    public List<OrderProductDto> getOrderProducts() {
+        return orderProducts;
     }
 
-    public void setProductIds(List<Long> productIds) {
-        this.productIds = productIds;
+    public void setOrderProducts(List<OrderProductDto> orderProducts) {
+        this.orderProducts = orderProducts;
     }
 
     public String getStatus() {
@@ -67,22 +65,6 @@ public class OrderDto {
         this.status = status;
     }
 
-    public String getStartAddress() {
-        return startAddress;
-    }
-
-    public void setStartAddress(String startAddress) {
-        this.startAddress = startAddress;
-    }
-
-    public String getEndAddress() {
-        return endAddress;
-    }
-
-    public void setEndAddress(String endAddress) {
-        this.endAddress = endAddress;
-    }
-
     public String getOrderDetails() {
         return orderDetails;
     }
@@ -91,13 +73,4 @@ public class OrderDto {
         this.orderDetails = orderDetails;
     }
 
-    public String getShipmentType() {
-        return shipmentType;
-    }
-
-    public void setShipmentType(String shipmentType) {
-        this.shipmentType = shipmentType;
-    }
-
-    private String shipmentType;
 }

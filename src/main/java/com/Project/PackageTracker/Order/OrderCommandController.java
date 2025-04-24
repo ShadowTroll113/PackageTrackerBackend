@@ -11,10 +11,15 @@ public class OrderCommandController {
     @Autowired
     private OrderService orderService;
 
-    // Crear un nuevo pedido
+    // Crear un nuevo pedido. Se espera que el OrderDto incluya la lista de productos con cantidades (orderProducts)
     @PostMapping
-    public Order createOrder(@RequestBody OrderDto newOrderDto) {
-        return orderService.createOrder(newOrderDto);
+    public ResponseEntity<Order> createOrder(@RequestBody OrderDto newOrderDto) {
+        try {
+            Order order = orderService.createOrder(newOrderDto);
+            return ResponseEntity.ok(order);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     // Actualizar un pedido existente
@@ -28,8 +33,7 @@ public class OrderCommandController {
     // Eliminar un pedido
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
-        return orderService.deleteOrder(id)
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+        boolean deleted = orderService.deleteOrder(id);
+        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 }

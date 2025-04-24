@@ -24,6 +24,14 @@ public class Product {
 
     @Column(nullable = false)
     private String name;
+    @Column
+    private String description;
+
+    @Column(nullable = false)
+    private double price;
+
+    @Column
+    private String category;
 
     public String getDescription() {
         return description;
@@ -57,14 +65,6 @@ public class Product {
         this.price = price;
     }
 
-    public int getQuantityInStock() {
-        return quantityInStock;
-    }
-
-    public void setQuantityInStock(int quantityInStock) {
-        this.quantityInStock = quantityInStock;
-    }
-
     public String getCategory() {
         return category;
     }
@@ -73,15 +73,5 @@ public class Product {
         this.category = category;
     }
 
-    @Column
-    private String description;
 
-    @Column(nullable = false)
-    private double price;
-
-    @Column(name = "quantity_in_stock")
-    private int quantityInStock;
-
-    @Column
-    private String category;
 }

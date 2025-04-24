@@ -1,21 +1,54 @@
 package com.Project.PackageTracker.Route;
 
+import com.Project.PackageTracker.Truck.Truck;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "routes")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"assignedTruck"})
 public class Route {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Genera valores auto-incrementales
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String startAddress;
+    @Column(nullable = false)
+    private String name;
+
+    @Column(columnDefinition = "TEXT")
+    private String details;
+
+    // Lista de IDs de Orders asignados a esta ruta
+    @ElementCollection
+    @CollectionTable(name = "route_order_ids", joinColumns = @JoinColumn(name = "route_id"))
+    @Column(name = "order_id")
+    private List<Long> orderIds;
+
+    // Relación con Truck (ManyToOne)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assigned_truck_id")
+    private Truck assignedTruck;
+
+    // Campo status ahora es un String
+    @Column(name = "status")
+    private String status;
+
+    @Column(name = "start_time")
+    private LocalDateTime startTime;
+
+    @Column(name = "estimated_end_time")
+    private LocalDateTime estimatedEndTime;
+
+    @Column(name = "actual_end_time")
+    private LocalDateTime actualEndTime;
 
     public Long getId() {
         return id;
@@ -25,34 +58,67 @@ public class Route {
         this.id = id;
     }
 
-    public String getStartAddress() {
-        return startAddress;
+    public LocalDateTime getActualEndTime() {
+        return actualEndTime;
     }
 
-    public void setStartAddress(String startAddress) {
-        this.startAddress = startAddress;
+    public void setActualEndTime(LocalDateTime actualEndTime) {
+        this.actualEndTime = actualEndTime;
     }
 
-    public String getEndAddress() {
-        return endAddress;
+    public String getName() {
+        return name;
     }
 
-    public void setEndAddress(String endAddress) {
-        this.endAddress = endAddress;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getRouteName() {
-        return routeName;
+    public String getDetails() {
+        return details;
     }
 
-    public void setRouteName(String routeName) {
-        this.routeName = routeName;
+    public void setDetails(String details) {
+        this.details = details;
     }
 
-    private String endAddress;
+    public Truck getAssignedTruck() {
+        return assignedTruck;
+    }
 
-    // Otros posibles atributos específicos de la ruta
-    private String routeName; // Nombre de la ruta, si es necesario
+    public void setAssignedTruck(Truck assignedTruck) {
+        this.assignedTruck = assignedTruck;
+    }
 
-    // Getters y setters generados por Lombok gracias a @Data
+    public List<Long> getOrderIds() {
+        return orderIds;
+    }
+
+    public void setOrderIds(List<Long> orderIds) {
+        this.orderIds = orderIds;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEstimatedEndTime() {
+        return estimatedEndTime;
+    }
+
+    public void setEstimatedEndTime(LocalDateTime estimatedEndTime) {
+        this.estimatedEndTime = estimatedEndTime;
+    }
 }

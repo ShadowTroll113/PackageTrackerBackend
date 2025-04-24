@@ -22,6 +22,30 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private long branchId;
+
+    public String name;
+
+    @Column(nullable = false)
+    private String username;
+
+    @Column(nullable = false)
+    private String email;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Column
+    private String role; // Puede ser "admin", "operador", "usuario" ???
+
+    public long getBranchId() {
+        return branchId;
+    }
+
+    public void setBranchId(long branchId) {
+        this.branchId = branchId;
+    }
+
     public String getName() {
         return name;
     }
@@ -30,7 +54,6 @@ public class User {
         this.name = name;
     }
 
-    public String name;
 
     public Long getId() {
         return id;
@@ -72,15 +95,4 @@ public class User {
         this.role = role;
     }
 
-    @Column(nullable = false)
-    private String username;
-
-    @Column(nullable = false)
-    private String email;
-
-    @Column(nullable = false)
-    private String password;
-
-    @Column
-    private String role; // Puede ser "admin", "operador", "usuario" ???
 }

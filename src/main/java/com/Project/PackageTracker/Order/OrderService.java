@@ -5,12 +5,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
+
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
@@ -18,40 +20,20 @@ public class OrderService {
     public Optional<Order> getOrderById(Long id) {
         return orderRepository.findById(id);
     }
-    // Crear un nuevo pedido
+
     public Order createOrder(OrderDto orderDto) {
         Order order = new Order();
-        order.setSenderId(orderDto.getSenderId());
-        order.setReceiverId(orderDto.getReceiverId());
-        order.setRouteId(orderDto.getRouteId());
-        order.setProductIds(orderDto.getProductIds());
-        order.setStatus(orderDto.getStatus());
-        order.setStartAddress(orderDto.getStartAddress());
-        order.setEndAddress(orderDto.getEndAddress());
-        order.setOrderDetails(orderDto.getOrderDetails());
-        order.setShipmentType(orderDto.getShipmentType());
-
+        mapDtoToEntity(orderDto, order);
         return orderRepository.save(order);
     }
 
-    // Actualizar un pedido existente
     public Optional<Order> updateOrder(Long id, OrderDto orderDto) {
         return orderRepository.findById(id).map(existingOrder -> {
-            existingOrder.setSenderId(orderDto.getSenderId());
-            existingOrder.setReceiverId(orderDto.getReceiverId());
-            existingOrder.setRouteId(orderDto.getRouteId());
-            existingOrder.setProductIds(orderDto.getProductIds());
-            existingOrder.setStatus(orderDto.getStatus());
-            existingOrder.setStartAddress(orderDto.getStartAddress());
-            existingOrder.setEndAddress(orderDto.getEndAddress());
-            existingOrder.setOrderDetails(orderDto.getOrderDetails());
-            existingOrder.setShipmentType(orderDto.getShipmentType());
-
+            mapDtoToEntity(orderDto, existingOrder);
             return orderRepository.save(existingOrder);
         });
     }
 
-    // Eliminar un pedido
     public boolean deleteOrder(Long id) {
         if (orderRepository.existsById(id)) {
             orderRepository.deleteById(id);
@@ -59,7 +41,20 @@ public class OrderService {
         }
         return false;
     }
+
+    private void mapDtoToEntity(OrderDto dto, Order entity) {
+        entity.setStoreId(dto.getStoreId());
+        entity.setWarehouseId(dto.getWarehouseId());
+        entity.setRouteId(dto.getRouteId());
+        // Convertir la lista de OrderProductDto a OrderProduct
+        if (dto.getOrderProducts() != null) {
+            entity.setOrderProducts(
+                    dto.getOrderProducts().stream()
+                            .map(opDto -> new OrderProduct(opDto.getProductId(), opDto.getQuantity()))
+                            .collect(Collectors.toList())
+            );
+        }
+        entity.setStatus(dto.getStatus());
+        entity.setOrderDetails(dto.getOrderDetails());
+    }
 }
-
-
-
