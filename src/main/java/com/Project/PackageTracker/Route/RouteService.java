@@ -3,22 +3,28 @@ package com.Project.PackageTracker.Route;
 import com.Project.PackageTracker.Order.Order;
 import com.Project.PackageTracker.Order.OrderRepository;
 import com.Project.PackageTracker.Truck.Truck;
+import com.Project.PackageTracker.Truck.TruckRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RouteService {
 
     private final RouteRepository routeRepository;
     private final OrderRepository orderRepository;
+    private final TruckRepository truckRepository;
 
     @Autowired
-    public RouteService(RouteRepository routeRepository, OrderRepository orderRepository) {
+    public RouteService(RouteRepository routeRepository,
+                        OrderRepository orderRepository,
+                        TruckRepository truckRepository) {
         this.routeRepository = routeRepository;
         this.orderRepository = orderRepository;
+        this.truckRepository = truckRepository;
     }
 
     // Crea una nueva ruta
@@ -28,56 +34,42 @@ public class RouteService {
 
     // Actualiza completamente una ruta existente
     public Route updateRoute(Long id, Route routeDetails) {
-        Route existingRoute = routeRepository.findById(id)
+        Route existing = routeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ruta no encontrada con id: " + id));
 
-        existingRoute.setName(routeDetails.getName());
-        existingRoute.setDetails(routeDetails.getDetails());
-        existingRoute.setStatus(routeDetails.getStatus());
-        existingRoute.setStartTime(routeDetails.getStartTime());
-        existingRoute.setEstimatedEndTime(routeDetails.getEstimatedEndTime());
-        existingRoute.setActualEndTime(routeDetails.getActualEndTime());
+        existing.setName(routeDetails.getName());
+        existing.setDetails(routeDetails.getDetails());
+        existing.setStatus(routeDetails.getStatus());
+        existing.setStartTime(routeDetails.getStartTime());
+        existing.setEstimatedEndTime(routeDetails.getEstimatedEndTime());
+        existing.setActualEndTime(routeDetails.getActualEndTime());
 
         if (routeDetails.getAssignedTruck() != null) {
-            existingRoute.setAssignedTruck(routeDetails.getAssignedTruck());
+            existing.setAssignedTruck(routeDetails.getAssignedTruck());
         }
 
-        // Se actualiza la lista de órdenes utilizando los IDs (orderIds) si se envían en el request.
-        if (routeDetails.getOrderIds() != null && !routeDetails.getOrderIds().isEmpty()) {
-            existingRoute.setOrderIds(routeDetails.getOrderIds());
+        if (routeDetails.getOrderIds() != null) {
+            existing.setOrderIds(new ArrayList<>(routeDetails.getOrderIds()));
         }
 
-        return routeRepository.save(existingRoute);
+        return routeRepository.save(existing);
     }
 
-    // Actualiza parcialmente una ruta
-    public Route partialUpdateRoute(Long id, Route routeUpdates) {
-        Route existingRoute = routeRepository.findById(id)
+    // Actualiza parcialmente una ruta existente
+    public Route partialUpdateRoute(Long id, Route updates) {
+        Route existing = routeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ruta no encontrada con id: " + id));
 
-        if (routeUpdates.getName() != null) {
-            existingRoute.setName(routeUpdates.getName());
-        }
-        if (routeUpdates.getDetails() != null) {
-            existingRoute.setDetails(routeUpdates.getDetails());
-        }
-        if (routeUpdates.getStatus() != null) {
-            existingRoute.setStatus(routeUpdates.getStatus());
-        }
-        if (routeUpdates.getStartTime() != null) {
-            existingRoute.setStartTime(routeUpdates.getStartTime());
-        }
-        if (routeUpdates.getEstimatedEndTime() != null) {
-            existingRoute.setEstimatedEndTime(routeUpdates.getEstimatedEndTime());
-        }
-        if (routeUpdates.getActualEndTime() != null) {
-            existingRoute.setActualEndTime(routeUpdates.getActualEndTime());
-        }
-        if (routeUpdates.getAssignedTruck() != null) {
-            existingRoute.setAssignedTruck(routeUpdates.getAssignedTruck());
-        }
+        if (updates.getName() != null)                existing.setName(updates.getName());
+        if (updates.getDetails() != null)             existing.setDetails(updates.getDetails());
+        if (updates.getStatus() != null)              existing.setStatus(updates.getStatus());
+        if (updates.getStartTime() != null)           existing.setStartTime(updates.getStartTime());
+        if (updates.getEstimatedEndTime() != null)    existing.setEstimatedEndTime(updates.getEstimatedEndTime());
+        if (updates.getActualEndTime() != null)       {existing.setActualEndTime(updates.getActualEndTime());}
+        existing.setAssignedTruck(updates.getAssignedTruck());
+        if (updates.getOrderIds() != null)            existing.setOrderIds(new ArrayList<>(updates.getOrderIds()));
 
-        return routeRepository.save(existingRoute);
+        return routeRepository.save(existing);
     }
 
     // Elimina una ruta por su id
@@ -95,58 +87,52 @@ public class RouteService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Orden no encontrada con id: " + orderId));
 
-        // Se asigna la ruta al pedido, usando el id de la ruta
-        order.setRouteId(route.getId());
+        // Vincular la orden a la ruta
+        order.setRouteId(routeId);
         orderRepository.save(order);
 
-        // Se actualiza la lista de orderIds de la ruta
-        List<Long> orderIds = route.getOrderIds();
-        if (orderIds == null) {
-            orderIds = new ArrayList<>();
+        // Añadir la orden a la lista de la ruta
+        List<Long> ids = route.getOrderIds();
+        if (ids == null) {
+            ids = new ArrayList<>();
         }
-        if (!orderIds.contains(order.getId())) {
-            orderIds.add(order.getId());
+        if (!ids.contains(orderId)) {
+            ids.add(orderId);
+            route.setOrderIds(ids);
         }
-        route.setOrderIds(orderIds);
 
         return routeRepository.save(route);
     }
 
-    // Asigna un camión a una ruta
+    // Asigna un camión existente a una ruta
     public Route assignTruck(Long routeId, Long truckId) {
         Route route = routeRepository.findById(routeId)
                 .orElseThrow(() -> new RuntimeException("Ruta no encontrada con id: " + routeId));
+        Truck truck = truckRepository.findById(truckId)
+                .orElseThrow(() -> new RuntimeException("Camión no encontrado con id: " + truckId));
 
-        // Dado que no se cuenta con un TruckRepository, se crea una instancia de Truck con el id
-        Truck truck = new Truck();
-        truck.setId(truckId);
         route.setAssignedTruck(truck);
-
         return routeRepository.save(route);
     }
 
-    // Métodos para consultas
+    // Métodos de consulta:
 
-    // Busca una ruta por el id del camión asignado
-    public Route findByTruckId(Long truckId) {
-        return routeRepository.findByAssignedTruckId(truckId)
-                .orElseThrow(() -> new RuntimeException("Ruta no encontrada para el camión con id: " + truckId));
-    }
-
-    // Retorna todas las rutas
     public List<Route> findAllRoutes() {
         return routeRepository.findAll();
     }
 
-    // Busca una ruta por su id
     public Route findRouteById(Long id) {
         return routeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ruta no encontrada con id: " + id));
     }
 
-    // Busca una ruta que contenga la orden dada
+    public Route findByTruckId(Long truckId) {
+        return routeRepository.findByAssignedTruckId(truckId)
+                .orElseThrow(() -> new RuntimeException("Ruta no encontrada para camión id: " + truckId));
+    }
+
     public Route findByOrderId(Long orderId) {
         return routeRepository.findByOrderIdsContaining(orderId)
-                .orElseThrow(() -> new RuntimeException("Ruta no encontrada para la orden con id: " + orderId));
+                .orElseThrow(() -> new RuntimeException("Ruta no encontrada para orden id: " + orderId));
     }
 }

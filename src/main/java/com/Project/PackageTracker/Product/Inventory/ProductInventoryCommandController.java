@@ -30,6 +30,18 @@ public class ProductInventoryCommandController {
         }
     }
 
+    // Endpoint para disminuir el stock de un producto en un almacén
+    @PatchMapping("/increase-stock")
+    public ResponseEntity<ProductInventory> increaseStock(@RequestBody DecreaseStockRequest request) {
+        try {
+            ProductInventory updated = productInventoryService.increaseStock(
+                    request.getProductId(), request.getBranchId(), request.getQuantity());
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
     // Clase auxiliar para recibir la petición de disminuir stock
     public static class DecreaseStockRequest {
         private Long productId;

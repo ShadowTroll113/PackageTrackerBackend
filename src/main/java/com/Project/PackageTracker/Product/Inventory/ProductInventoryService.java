@@ -64,4 +64,21 @@ public class ProductInventoryService {
             throw new RuntimeException("No se encontró inventario para el producto " + productId + " en la sucursal " + branchId);
         }
     }
+    // Aumenta el stock para un producto en una sucursal
+    public ProductInventory increaseStock(Long productId, Long branchId, int quantity) {
+        Optional<ProductInventory> optionalPi =
+                productInventoryRepository.findByProductIdAndWarehouseId(productId, branchId);
+
+        if (optionalPi.isPresent()) {
+            ProductInventory pi = optionalPi.get();
+            int newQuantity = pi.getQuantity() + quantity;
+            pi.setQuantity(newQuantity);
+            return productInventoryRepository.save(pi);
+        } else {
+            throw new RuntimeException(
+                    "No se encontró inventario para el producto " + productId +
+                            " en la sucursal " + branchId
+            );
+        }
+    }
 }
