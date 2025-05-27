@@ -14,9 +14,18 @@ public class OrderQueryController {
     @Autowired
     private OrderService orderService;
 
+    // 1) Cuando exista el query-param branchId
+    @GetMapping(params = "branchId")
+    public ResponseEntity<List<Order>> getOrdersByBranch(
+            @RequestParam("branchId") Long branchId) {
+        List<Order> orders = orderService.getOrdersByBranch(branchId);
+        return ResponseEntity.ok(orders);
+    }
+
+    // 2) Cuando no venga branchId, devuelve todos
     @GetMapping
-    public List<Order> getAllOrders() {
-        return orderService.getAllOrders();
+    public ResponseEntity<List<Order>> getAllOrders() {
+        return ResponseEntity.ok(orderService.getAllOrders());
     }
 
     @GetMapping("/{id}")
@@ -26,3 +35,4 @@ public class OrderQueryController {
                 .orElse(ResponseEntity.notFound().build());
     }
 }
+

@@ -17,7 +17,6 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Un único storeId, sin colecciones
     @Column(name = "store_id")
     private Long storeId;
 
@@ -33,7 +32,7 @@ public class Order {
     private List<OrderProduct> orderProducts;
 
     @Column(nullable = false)
-    private String status; // "In Transit", "Delivered", "Pending"
+    private String status;
 
     @Column(columnDefinition = "TEXT")
     private String orderDetails;

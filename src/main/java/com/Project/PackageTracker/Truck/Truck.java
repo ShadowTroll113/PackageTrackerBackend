@@ -2,8 +2,6 @@ package com.Project.PackageTracker.Truck;
 
 import com.Project.PackageTracker.Route.Route;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
@@ -17,29 +15,30 @@ public class Truck {
     @Column(nullable = false)
     private String name;
 
-   // @JsonIgnore
-   @JsonBackReference
-    @OneToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "route_id", unique = true)
+    @Column(nullable = false)
+    private Double latitude;
+
+    @Column(nullable = false)
+    private Double longitude;
+
+    /**
+     * Campo manual para mantener la FK route_id sincronizada
+     */
+    @Column(name = "route_id")
+    private Long routeId;
+
+    @OneToOne(mappedBy = "assignedTruck", cascade = CascadeType.MERGE)
+    @JsonBackReference
     private Route route;
 
-
-    public Truck() {
-    }
-    @JsonProperty("routeId")
-    public Long getRouteId() {
-        return route != null ? route.getId() : null;
-    }
-    // Constructor con campos
-    public Truck(String name, Route route) {
-        this.name = name;
-        setRoute(route); // usa el setter para sincronizar bidireccionalmente
-    }
-
-    // Getters y setters
+    public Truck() {}
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -50,19 +49,39 @@ public class Truck {
         this.name = name;
     }
 
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Long getRouteId() {
+        return routeId;
+    }
+
+    public void setRouteId(Long routeId) {
+        this.routeId = routeId;
+    }
+
     public Route getRoute() {
         return route;
     }
 
     public void setRoute(Route route) {
         this.route = route;
-        // sincroniza la cara inversa: que la ruta apunte a este camión
+        // Sincronizar ambos lados de la relación
         if (route != null && route.getAssignedTruck() != this) {
             route.setAssignedTruck(this);
         }
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 }

@@ -1,3 +1,4 @@
+// Route.java
 package com.Project.PackageTracker.Route;
 
 import com.Project.PackageTracker.Truck.Truck;
@@ -13,6 +14,7 @@ import java.util.List;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @ToString(exclude = "assignedTruck")
 public class Route {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,22 +25,28 @@ public class Route {
     @Column(columnDefinition = "TEXT")
     private String details;
 
-    @ElementCollection
-    @CollectionTable(name = "route_order_ids", joinColumns = @JoinColumn(name = "route_id"))
-    @Column(name = "order_id")
-    private List<Long> orderIds;
 
+    // Lado dueño: aquí se guarda assigned_truck_id
+    @OneToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "assigned_truck_id", unique = true)
     @JsonManagedReference
-    @OneToOne
-    @JoinColumn(name = "assigned_truck_id")
     private Truck assignedTruck;
 
     @Column(name = "status")
     private String status;
 
+    @Column(name = "warehouse")
+    private Long warehouseId;
+
     private LocalDateTime startTime;
     private LocalDateTime estimatedEndTime;
     private LocalDateTime actualEndTime;
+
+    // getter/setter estándar de id, name, details, etc.
+
+    public Truck getAssignedTruck() {
+        return assignedTruck;
+    }
 
     public void setAssignedTruck(Truck truck) {
         this.assignedTruck = truck;
@@ -71,17 +79,6 @@ public class Route {
         this.details = details;
     }
 
-    public List<Long> getOrderIds() {
-        return orderIds;
-    }
-
-    public void setOrderIds(List<Long> orderIds) {
-        this.orderIds = orderIds;
-    }
-
-    public Truck getAssignedTruck() {
-        return assignedTruck;
-    }
 
     public String getStatus() {
         return status;
@@ -89,6 +86,14 @@ public class Route {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Long getWarehouseId() {
+        return warehouseId;
+    }
+
+    public void setWarehouseId(Long warehouseId) {
+        this.warehouseId = warehouseId;
     }
 
     public LocalDateTime getStartTime() {

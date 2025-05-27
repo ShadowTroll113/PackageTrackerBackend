@@ -46,9 +46,14 @@ public class ProductInventoryService {
 
     // Obtiene la lista de inventarios para una sucursal
     public List<ProductInventory> getProductInventoryByBranch(Long branchId) {
-        return productInventoryRepository.findByWarehouseId(branchId);
-    }
+        if(branchId == -1){
+            return productInventoryRepository.findAll();
+        }
+        else{
+            return productInventoryRepository.findByWarehouseId(branchId);
+        }
 
+    }
     // Disminuye el stock para un producto en una sucursal
     public ProductInventory decreaseStock(Long productId, Long branchId, int quantity) {
         Optional<ProductInventory> optionalPi = productInventoryRepository.findByProductIdAndWarehouseId(productId, branchId);

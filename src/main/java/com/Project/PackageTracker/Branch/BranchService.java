@@ -1,7 +1,5 @@
 package com.Project.PackageTracker.Branch;
 
-import com.Project.PackageTracker.Product.Inventory.ProductInventory;
-import com.Project.PackageTracker.Product.Inventory.ProductInventoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +16,8 @@ public class BranchService {
         return branchRepository.findAll();
     }
 
-    public Optional<Branch> getBranchById(Long id) {
-        return branchRepository.findById(id);
+    public Branch getBranchById(Long id) {
+        return branchRepository.findBranchById(id);
     }
 
     public Branch createBranch(BranchDto branchDto) {

@@ -26,8 +26,6 @@ public class BranchQueryController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Branch> getBranchById(@PathVariable Long id) {
-        return branchService.getBranchById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(branchService.getBranchById(id));
     }
 }

@@ -1,5 +1,7 @@
 package com.Project.PackageTracker.Truck;
 
+import com.Project.PackageTracker.Branch.Branch;
+import com.Project.PackageTracker.Branch.BranchRepository;
 import com.Project.PackageTracker.Route.Route;
 import com.Project.PackageTracker.Route.RouteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,20 +19,25 @@ public class TruckService {
     @Autowired
     private RouteRepository routeRepository;
 
+    @Autowired
+    private BranchRepository branchRepository;
+
     /**
      * Crea un nuevo camión a partir del DTO.
      * Solo campos: name y routeId.
      */
-    public Truck createTruck(Truck dto) {
+    public Truck createTruck(TruckDTO dto) {
         Truck truck = new Truck();
         truck.setName(dto.getName());
 
-        if (dto.getRoute() != null) {
-            Route route = routeRepository.findById(dto.getRoute().getId())
-                    .orElseThrow(() -> new RuntimeException("Ruta no encontrada: " + dto.getRoute()));
+        if (dto.getRouteId() != null) {
+            Route route = routeRepository.findById(dto.getRouteId())
+                    .orElseThrow(() -> new RuntimeException("Ruta no encontrada: " + dto.getRouteId()));
             truck.setRoute(route);
         }
-
+        Branch branch = branchRepository.findBranchById(dto.getWarehouseId());
+        truck.setLatitude(branch.getLatitude());
+        truck.setLongitude(branch.getLongitude());
         return truckRepository.save(truck);
     }
 
@@ -81,4 +88,8 @@ public class TruckService {
     }
 
 
+
+    public List<Truck> getTruckByRouteStatus(String enCamino) {
+        return truckRepository.findByRouteStatus(enCamino);
+    }
 }

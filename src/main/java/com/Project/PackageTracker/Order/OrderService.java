@@ -1,8 +1,10 @@
+// OrderService.java
 package com.Project.PackageTracker.Order;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -15,6 +17,12 @@ public class OrderService {
 
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
+    }
+
+    public List<Order> getOrdersByBranch(Long branchId) {
+        if(orderRepository.findByStoreId(branchId).isEmpty())
+        return orderRepository.findByWarehouseId(branchId);
+        else return orderRepository.findByStoreId(branchId);
     }
 
     public Optional<Order> getOrderById(Long id) {

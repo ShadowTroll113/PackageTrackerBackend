@@ -8,8 +8,8 @@ public class CreateUsers {
 
         // Crear los usuarios
         User admin = createUser(1, "admin", "admin@example.com", "admin", "ADMIN", passwordEncoder);
-        User user1 = createUser(2, "user1", "user1@example.com", "user1", "USER", passwordEncoder);
-        User user2 = createUser(3, "user2", "user2@example.com", "user2", "USER", passwordEncoder);
+        User user1 = createUser(2, "user1", "user1@example.com", "tienda", "USER", passwordEncoder);
+        User user2 = createUser(3, "user2", "user2@example.com", "almacen", "USER", passwordEncoder);
 
         // Imprimir los usuarios creados
         System.out.println("Usuario creado: " + admin);

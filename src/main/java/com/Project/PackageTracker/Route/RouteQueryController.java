@@ -1,5 +1,6 @@
 package com.Project.PackageTracker.Route;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -13,11 +14,6 @@ public class RouteQueryController {
         this.routeService = routeService;
     }
 
-    // Obtener ruta por ID de camión
-    @GetMapping("/by-truck/{truckId}")
-    public Route getRouteByTruckId(@PathVariable Long truckId) {
-        return routeService.findByTruckId(truckId);
-    }
 
     // Obtener todas las rutas
     @GetMapping
@@ -31,9 +27,17 @@ public class RouteQueryController {
         return routeService.findRouteById(id);
     }
 
-    // Obtener ruta por ID de orden
-    @GetMapping("/by-order/{orderId}")
-    public Object getRouteByOrderId(@PathVariable Long orderId) {
-        return routeService.findByOrderId(orderId);
+
+
+    @GetMapping("/by-truck/{truckId}")
+    public ResponseEntity<RouteResponseDTO> getRoute(@PathVariable Long truckId) {
+        return routeService.findByTruckId(truckId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/by-warehouse/{warehouseId}")
+    public List<Route> getRoutes(@PathVariable Long warehouseId) {
+        return routeService.findByWarehouseId(warehouseId);
     }
 }

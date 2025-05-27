@@ -15,9 +15,9 @@ public class TruckCommandController {
 
     // Crear un nuevo camión
     @PostMapping
-    public ResponseEntity<Truck> createTruck(@RequestBody Truck newTruckDto) {
+    public ResponseEntity<Truck> createTruck(@RequestBody TruckDTO truckDto) {
         try {
-            Truck truck = truckService.createTruck(newTruckDto);
+            Truck truck = truckService.createTruck(truckDto);
             return ResponseEntity.ok(truck);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
