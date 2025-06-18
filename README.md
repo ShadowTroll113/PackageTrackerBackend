@@ -84,8 +84,9 @@ Estructura del proyecto
    ├─ classes/
    └─ ...
 ```
-Enlaces de interés
+Enlaces de interés:
 Repositorio Backend: https://github.com/ShadowTroll113/PackageTrackerBackend
+
 Repositorio Frontend: https://github.com/ShadowTroll113/Package-Tracer-Frontend
 
 Demo en vídeo: https://drive.google.com/file/d/1p2tnTumy5I_rhqN_maW_lE1ZPPXW6_m_/view?usp=sharing
