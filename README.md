@@ -31,9 +31,10 @@ Servidor del **Sistema Integral de Gestión de Inventarios (SIGI)**, desarrollad
 git clone https://github.com/ShadowTroll113/PackageTrackerBackend.git sigi-backend
 cd sigi-backend
 mvn install
+```
 Ejecución
 Modo desarrollo
-```
+
 
 ```
 mvn spring-boot:run
@@ -46,7 +47,7 @@ mvn package
 java -jar target/PackageTracker-0.0.1-SNAPSHOT.jar
 ```
 Estructura del proyecto
-swift
+```
 .
 ├─ .gitattributes
 ├─ .gitignore
@@ -82,7 +83,7 @@ swift
    ├─ PackageTracker-0.0.1-SNAPSHOT.jar
    ├─ classes/
    └─ ...
-
+```
 Enlaces de interés
 Repositorio Backend: https://github.com/ShadowTroll113/PackageTrackerBackend
 Repositorio Frontend: https://github.com/ShadowTroll113/Package-Tracer-Frontend
