@@ -61,7 +61,7 @@ public class UserService {
                 String encodedPassword = passwordEncoder.encode(userDetails.getPassword());
                 user.setPassword(encodedPassword);
             }
-
+            user.setBranchId((userDetails.getBranchId()));
             user.setRole(userDetails.getRole());
             return userRepository.save(user);
         });
